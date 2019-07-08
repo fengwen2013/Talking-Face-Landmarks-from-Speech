@@ -64,8 +64,7 @@ class faceNormalizer(object):
         
         outPts.append([np.int(xout), np.int(yout)])
         
-        tform = cv2.estimateRigidTransform(np.array([inPts]), np.array([outPts]), False)
-        
+        tform, _ = cv2.estimateAffinePartial2D(np.array([inPts]), np.array([outPts]))
         return tform
 
     def tformFlmarks(self, flmark, tform):
@@ -112,11 +111,11 @@ class faceNormalizer(object):
         firstFlmark = exptransSeq[0,:,:]
         indexes = np.array([60, 64, 62, 67])
 
-        tformMS = cv2.estimateRigidTransform(firstFlmark[:,:], np.float32(meanShape[:,:]), True)
+        tformMS, _ = cv2.estimateAffine2D(firstFlmark[:,:], np.float32(meanShape[:,:]))
 
         sx = np.sign(tformMS[0,0])*np.sqrt(tformMS[0,0]**2 + tformMS[0,1]**2)
         sy = np.sign(tformMS[1,0])*np.sqrt(tformMS[1,0]**2 + tformMS[1,1]**2)
-        print sx, sy
+        print(sx, sy)
         prevLmark = copy.deepcopy(firstFlmark)
         prevExpTransFlmark = copy.deepcopy(meanShape)
 
@@ -143,11 +142,11 @@ def write_video_wpts_wsound_unnorm(frames, sound, fs, path, fname, xLim, yLim):
         os.remove(os.path.join(path, fname+'.wav'))
         os.remove(os.path.join(path, fname+'_ws.mp4'))
     except:
-        print 'Exp'
+        print('Exp')
 
     if len(frames.shape) < 3:
         frames = np.reshape(frames, (frames.shape[0], frames.shape[1]/2, 2))
-    print frames.shape
+    print(frames.shape)
 
     FFMpegWriter = manimation.writers['ffmpeg']
     metadata = dict(title='Movie Test', artist='Matplotlib',
@@ -188,11 +187,11 @@ def write_video_wpts_wsound(frames, sound, fs, path, fname, xLim, yLim):
         os.remove(os.path.join(path, fname+'.wav'))
         os.remove(os.path.join(path, fname+'_ws.mp4'))
     except:
-        print 'Exp'
+        print('Exp')
 
     if len(frames.shape) < 3:
         frames = np.reshape(frames, (frames.shape[0], frames.shape[1]/2, 2))
-    print frames.shape
+    print(frames.shape)
 
     FFMpegWriter = manimation.writers['ffmpeg']
     metadata = dict(title='Movie Test', artist='Matplotlib',
@@ -212,7 +211,7 @@ def write_video_wpts_wsound(frames, sound, fs, path, fname, xLim, yLim):
     
     if frames.shape[1] == 20:
         lookup = [[x[0] - 48, x[1] - 48] for x in Mouth]
-        print lookup
+        print(lookup)
     else:
         lookup = faceLmarkLookup
 
@@ -239,11 +238,11 @@ def write_video_wpts_wsound(frames, sound, fs, path, fname, xLim, yLim):
 def plot_flmarks(pts, lab, xLim, yLim, xLab, yLab, figsize=(10, 10)):
     if len(pts.shape) != 3:
         pts = np.reshape(pts, (pts.shape[0]/2, 2))
-    print pts.shape
+    print(pts.shape)
 
     if pts.shape[0] == 20:
         lookup = [[x[0] - 48, x[1] - 48] for x in Mouth]
-        print lookup
+        print(lookup)
     else:
         lookup = faceLmarkLookup
 
